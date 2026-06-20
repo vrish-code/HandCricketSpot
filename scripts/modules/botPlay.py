@@ -6,49 +6,46 @@ import time as t
 
 st.set_page_config(layout="wide")
 
-
-def playingInterface():
-    
-    if "playerName" not in st.session_state:
+if "playerName" not in st.session_state:
      st.session_state.playerName=f"Player{random.randint(1000,10000)}"
-
-    with st.container(border=True):
-        
-        
-        if "playDict" not in st.session_state:
-            choiceMatch=st.slider("How many overs for the match?", min_value=1, max_value=20)
-            play=st.button(f"Play match for {choiceMatch} overs")
-            if play:
-             choiceMatch*=6
-             overCount=choiceMatch/6
-             st.session_state.playDict={"Score":0,
+def startDataBase(choiceMatch):
+    
+    choiceMatch*=6
+    overCount=choiceMatch/6
+    st.session_state.playDict={"Score":0,
               "BallsPlayed":0,
               "RunRate":0,
                "Total Overs":overCount  }
-        
-       
-        c1,c2=st.columns(2, border=True)  
-        with c1:
+
+def playingInterface():
+    if "playDict" not in st.session_state:
+        choiceMatch=st.slider("How many overs for the match?", min_value=1, max_value=20)
+        play=st.button(f"Play match for {choiceMatch} overs", on_click=startDataBase(choiceMatch))
+    
+   
+    if st.session_state.playDict:
+        with st.container(border=True):
+         c1,c2=st.columns(2, border=True)  
+         with c1:
             st.badge("Batting", color="green")
             st.subheader(st.session_state.playerName)
             st.divider()
             st.image(r"images/humanIm.png.png")
-        with c2:
+         with c2:
             st.badge("Bowling", color="red")
             st.subheader("Bot")
             st.divider()
             st.image(r"images/robotImg.png")
             
             
-        with st.container(border=True):
+         with st.container(border=True):
             st.subheader("Play here.")
             with st.container(border=True):
                 if st.button("Quit this page"):
-                    choice=st.pills("Are you sure?", ["Yes", "No"])
-                    if choice:
-                        st.session_state.clear()
-                        playingInterface()
-                        st.rerun()
+                    st.session_state.clear()
+                    st.rerun()
+                    playingInterface()
+                        
             c1,c2=st.columns(2, border=True)
             with c1:
                 st.badge(st.session_state.playerName, color="blue")
@@ -77,18 +74,12 @@ def playingInterface():
                             st.subheader("Game Stats")
                             st.divider()
                             with st.container(border=True):
-                                if st.button("Quit this page"):
-                                    choice=st.pills("Are you sure?", ["Yes", "No"])
-                                    if choice:
-                                        st.session_state.clear()
-                                        playingInterface()
-                                        st.rerun()
                                 c9,c0,ca=st.columns(3, border=True)
                                 c9.metric("Score", f"{st.session_state.playDict["Score"]} RUNS")
                                 c0.metric("Run Rate", f"{st.session_state.playDict["RunRate"]}")
                                 ca.metric("Overs Played", f"{st.session_state.playDict["BallsPlayed"]/6:.2f} OVERS")
                             
-                    elif st.session_state.playDict["BallsPlayed"]==st.session_state.playDict["Total Overs"]:
+                    elif st.session_state.playDict["BallsPlayed"]==st.session_state.playDict["Total Overs"]*6:
                         st.success("Match finished!")
                         st.subheader("Game Stats")
                         t.sleep(10)

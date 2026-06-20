@@ -1,2 +1,6 @@
 import streamlit as st
-st.image(r"images/image.png")
+def quit():
+    st.button("Quit")
+    return 
+
+quit()
