@@ -1,8 +1,8 @@
 import random
 import streamlit as st
 import matplotlib as plt
-import pandas as pd
 import time as t
+  
 
 st.set_page_config(layout="wide")
 
@@ -64,11 +64,12 @@ def playingInterface():
             with c2:
                 st.badge("Bot", color="green")
                 st.write(f"Bot to {"Bowl"}")
-                if play:
-                    runPlayedByBot=random.choice(list(range(1,12)))
-                    st.metric("Run played by bot", runPlayedByBot)
+                if play: 
+                    
+                    st.session_state.runPlayedByBot=random.choice(list(range(1,12)))
+                    st.metric("Run played by bot", st.session_state.runPlayedByBot)
           
-            if play and runPlayedByBot:
+            if play and st.session_state.runPlayedByBot:
                 st.subheader("Game Stats")
                 st.divider()
                 with st.container(border=True):
@@ -79,8 +80,8 @@ def playingInterface():
                     c.metric("Total overs in this match", f"{st.session_state.playDict["Total Overs"]} OVERS")
                 with st.container(border=True):
                     st.write(f"Player:{runPlayed}")
-                    st.write(f"Bot: {runPlayedByBot}")
-                    if runPlayed==runPlayedByBot:
+                    st.write(f"Bot: {st.session_state.runPlayedByBot}")
+                    if runPlayed==st.session_state.runPlayedByBot:
                           with c1:
                             st.error("Out!")
                             st.subheader("Game Stats")
@@ -90,7 +91,9 @@ def playingInterface():
                                 c9.metric("Score", f"{st.session_state.playDict["Score"]} RUNS")
                                 c0.metric("Run Rate", f"{st.session_state.playDict["RunRate"]}")
                                 ca.metric("Balls Played", f"{st.session_state.playDict["BallsPlayed"]} BALLS")
-                            
+                                t.sleep(50)
+                                st.session_state.clear()
+                                st.rerun()
                     elif st.session_state.playDict["BallsPlayed"]==st.session_state.playDict["Total Overs"]*6:
                         st.success("Match finished!")
                         st.subheader("Game Stats")
@@ -100,11 +103,9 @@ def playingInterface():
                           c9.metric("Score", f"{st.session_state.playDict["Score"]} RUNS")
                           c0.metric("Run Rate", f"{st.session_state.playDict["RunRate"]}")
                           ca.metric("Balls Played", f"{st.session_state.playDict["BallsPlayed"]} BALLS")
-                          if st.button("Start a new match with bot"):
-                             st.session_state.clear()
-                             st.rerun()
-                             playingInterface()
-                             
+                          t.sleep(50)
+                          st.session_state.clear()
+                          st.rerun()   
                        
                       
                   
