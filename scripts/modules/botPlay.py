@@ -6,7 +6,8 @@ import time as t
 
 st.set_page_config(layout="wide")
 
-
+if "gameOver" not in st.session_state:
+   st.session_state.gameOver=False
 def startDataBase():
     if "playerName" not in st.session_state:
      st.session_state.playerName=f"Player{random.randint(1000,10000)}"
@@ -54,8 +55,8 @@ def playingInterface():
             with c1:
                 st.badge(st.session_state.playerName, color="blue")
                 st.write(f"Player to Bat")
-                runPlayed=st.slider("Choose what to play.", min_value=1, max_value=11)
-                play=st.button(f"Play {runPlayed}?")
+                runPlayed=st.slider("Choose what to play.", min_value=1, max_value=11, disabled=st.session_state.gameOver)
+                play=st.button(f"Play {runPlayed}?", disabled=st.session_state.gameOver)
                 if play:
                     st.session_state.playDict["Score"]+=runPlayed
                     st.session_state.playDict["BallsPlayed"]+=1
@@ -82,22 +83,24 @@ def playingInterface():
                     st.write(f"Player:{runPlayed}")
                     st.write(f"Bot: {st.session_state.runPlayedByBot}")
                     if runPlayed==st.session_state.runPlayedByBot:
-                          with c1:
-                            st.error("Out!")
-                            st.subheader("Game Stats")
-                            st.divider()
-                            with st.container(border=True):
-                                c9,c0,ca=st.columns(3, border=True)
-                                c9.metric("Score", f"{st.session_state.playDict["Score"]} RUNS")
-                                c0.metric("Run Rate", f"{st.session_state.playDict["RunRate"]}")
-                                ca.metric("Balls Played", f"{st.session_state.playDict["BallsPlayed"]} BALLS")
-                                t.sleep(50)
-                                st.session_state.clear()
-                                st.rerun()
+                        st.error("Out!")
+                        st.session_state.gameOver=True
+                        st.subheader("Game Stats")
+                        st.divider()
+                        with st.container(border=True):
+                            c9,c0,ca=st.columns(3, border=True)
+                            c9.metric("Score", f"{st.session_state.playDict["Score"]} RUNS")
+                            c0.metric("Run Rate", f"{st.session_state.playDict["RunRate"]}")
+                            ca.metric("Balls Played", f"{st.session_state.playDict["BallsPlayed"]} BALLS")
+                            t.sleep(50)
+                            st.session_state.clear()
+                            st.rerun()
+                          
                     elif st.session_state.playDict["BallsPlayed"]==st.session_state.playDict["Total Overs"]*6:
                         st.success("Match finished!")
                         st.subheader("Game Stats")
                         st.divider()
+                        st.session_state.gameOver=True
                         with st.container(border=True):
                           c9,c0,ca=st.columns(3, border=True)
                           c9.metric("Score", f"{st.session_state.playDict["Score"]} RUNS")
