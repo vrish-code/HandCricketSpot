@@ -1,6 +1,1 @@
-import streamlit as st
-def quit():
-    st.button("Quit")
-    return 
-
-quit()
+print(list(range(1,12)))
