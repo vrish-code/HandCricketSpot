@@ -74,7 +74,7 @@ def playingInterface():
                     runPlayedByBot=random.choice(list(range(1,12)))
                     st.metric("Run played by bot", runPlayedByBot)
           
-            if play and st.session_state.runPlayedByBot:
+            if play and runPlayedByBot:
                 st.subheader("Game Stats")
                 st.divider()
                 with st.container(border=True):
@@ -86,20 +86,26 @@ def playingInterface():
                 with st.container(border=True):
                     st.write(f"Player:{runPlayed}")
                     st.write(f"Bot: {runPlayedByBot}")
-                    if runPlayed==st.session_state.runPlayedByBot:
+                    if runPlayed==runPlayedByBot:
                         st.error("Out!")
-                        st.session_state.gameOver=True
+
                         st.subheader("Game Stats")
                         st.divider()
                         with st.container(border=True):
                             gameStats=pd.DataFrame(list(st.session_state.playDict.items()), columns=["Stat Category", "Stat Obtained"])
                             st.dataframe(gameStats, hide_index=True)
                             st.divider()
-                            h,j=st.columns(2, border=True)
-                            with h:
-                             ballsBowledList=list(range(1, (st.session_state.playDict["Total Overs"]*6)+1))
+                            
+                            with st.container(border=True):
+                             ballsBowledList=list(range(1, (int(st.session_state.playDict["Total Overs"]*6))+1))
                              a,b=plt.subplots()
-                             b.plot(ballsBowledList, st.session_state.playDict["Runs Played"], label=st.session_state.playerName, color="blue")
+                             b.barh(ballsBowledList, st.session_state.playDict["Runs Played"],  color="blue")
+                             b.set_title("Runs played in match")
+                             b.set_xlabel("Runs played")
+                             b.set_ylabel("Ball no.")
+                             b.grid(True, alpha=0.06, linestyle="-")
+                             b.set_xlim(0,max(ballsBowledList))
+                             st.pyplot(a)
                             t.sleep(50)
                             st.session_state.clear()
                             st.rerun()
@@ -108,12 +114,21 @@ def playingInterface():
                         st.success("Match finished!")
                         st.subheader("Game Stats")
                         st.divider()
-                        st.session_state.gameOver=True
+                        
                         with st.container(border=True):
-                          c9,c0,ca=st.columns(3, border=True)
-                          c9.metric("Score", f"{st.session_state.playDict["Score"]} RUNS")
-                          c0.metric("Run Rate", f"{st.session_state.playDict["RunRate"]}")
-                          ca.metric("Balls Played", f"{st.session_state.playDict["Balls Played"]} BALLS")
+                          gameStats=pd.DataFrame(list(st.session_state.playDict.items()), columns=["Stat Category", "Stat Obtained"])
+                          st.dataframe(gameStats, hide_index=True)
+                          st.divider()
+                          with st.container(border=True):
+                             ballsBowledList=list(range(1, (int(st.session_state.playDict["Total Overs"]*6))+1))
+                             a,b=plt.subplots()
+                             b.barh(ballsBowledList, st.session_state.playDict["Runs Played"], label=st.session_state.playerName, color="blue")
+                             b.set_title("Runs played in match")
+                             b.set_xlabel("Runs played")
+                             b.set_ylabel("Ball no.")
+                             b.grid(True, alpha=0.06, linestyle="-")
+                             b.set_xlim(0,max(ballsBowledList))
+                             st.pyplot(a)
                           t.sleep(50)
                           st.session_state.clear()
                           st.rerun()   
