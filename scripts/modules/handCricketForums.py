@@ -15,7 +15,7 @@ class article:
         articleDict={r.randint(1, 100000000000000000000000000000000000000):{"Title":self.title, "Author":self.name, "Text":self.article, "Description":self.descr}}
         apf.patch(articleDict)
 if "stFormKey" not in st.session_state:
-    st.session_state.stFormKey=r.randint(1,10000)
+    st.session_state.stFormKey=""
 def newArticle():
     with st.container(border=True):
         with st.form(st.session_state.stFormKey):
