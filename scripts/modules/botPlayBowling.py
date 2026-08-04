@@ -8,16 +8,16 @@ st.set_page_config(layout="wide")
 
 def startDataBase():
     if "playerName" not in st.session_state:
-        st.session_state.playerName = f"Player{random.randint(1000, 10000)}"
+        st.session_state.playerName = f"Player32421"
         
     if "playDict" not in st.session_state:
         choiceMatchBow = st.slider(
             "How many overs for the match?", 
             min_value=1, 
             max_value=20, 
-            key=f"sl_i_{random.randint(10000, 99999)}"
+            key=f"sl_i_4325"
         )
-        if st.button(f"Play match for {choiceMatchBow} overs", key=f"bt_i_{random.randint(10000, 99999)}"):
+        if st.button(f"Play match for {choiceMatchBow} overs", key=f"bt_i_3424"):
             choiceMatchBow *= 6
             overCount = choiceMatchBow / 6
             st.session_state.playDict = {
@@ -49,17 +49,16 @@ def playingInterface():
         with st.container(border=True):
             st.subheader("Play here.")
             with st.container(border=True):
-                if st.button("Quit this page", key=f"bt_q_{random.randint(10000, 99999)}"):
+                if st.button("Quit this page", key=f"bt_q_1321"):
                     st.session_state.clear()
                     st.rerun()
                     playingInterface()
                         
             c1, c2 = st.columns(2, border=True)
             
-            ball_count = st.session_state.playDict['Balls Played']
-            runPlayed = st.slider("Choose what to play.", min_value=1, max_value=11, key=f"sl_p_{ball_count}_{random.randint(10000, 99999)}")
+            runPlayed = st.slider("Choose what to play.", min_value=1, max_value=11, key=f"sl_p_68437")
             
-            if st.button(f"Play {runPlayed}?", key=f"bt_p_{ball_count}_{random.randint(10000, 99999)}"):
+            if st.button(f"Play {runPlayed}?", key=f"bt_p_14"):
                 st.session_state.playDict["Balls Played"] += 1
                 
                 with c1:
