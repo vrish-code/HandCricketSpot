@@ -11,18 +11,13 @@ def startDataBase():
         st.session_state.playerName = f"Player{random.randint(1000, 10000)}"
         
     if "playDict" not in st.session_state:
-        # Dynamic slider for choosing overs
         choiceMatchBow = st.slider(
             "How many overs for the match?", 
             min_value=1, 
             max_value=20, 
-            key="initial_overs_slider"
+            key=f"sl_i_{random.randint(10000, 99999)}"
         )
-        play = st.button(
-            f"Play match for {choiceMatchBow} overs", 
-            key="initial_play_match_button"
-        )
-        if play:
+        if st.button(f"Play match for {choiceMatchBow} overs", key=f"bt_i_{random.randint(10000, 99999)}"):
             choiceMatchBow *= 6
             overCount = choiceMatchBow / 6
             st.session_state.playDict = {
@@ -38,86 +33,71 @@ def playingInterface():
     startDataBase()
    
     if "playDict" in st.session_state and st.session_state.playDict:
-        # Unique keys assigned to all layout blocks and interaction triggers
-        with st.container(border=True, key="team_status_container"):
-            c1, c2 = st.columns(2, border=True, key="team_status_columns")  
+        with st.container(border=True):
+            c1, c2 = st.columns(2, border=True)  
             with c1:
-                st.badge("Bowling", color="green", key="bowling_status_badge")
+                st.badge("Bowling", color="green")
                 st.subheader(st.session_state.playerName)
                 st.divider()
                 st.image(r"images/humanIm.png.png")
             with c2:
-                st.badge("Batting", color="red", key="batting_status_badge")
+                st.badge("Batting", color="red")
                 st.subheader("Bot")
                 st.divider()
                 st.image(r"images/robotImg.png")
             
-        with st.container(border=True, key="main_gameplay_container"):
+        with st.container(border=True):
             st.subheader("Play here.")
-            with st.container(border=True, key="quit_button_container"):
-                if st.button("Quit this page", key="quit_game_session_button"):
+            with st.container(border=True):
+                if st.button("Quit this page", key=f"bt_q_{random.randint(10000, 99999)}"):
                     st.session_state.clear()
                     st.rerun()
                     playingInterface()
                         
-            c1, c2 = st.columns(2, border=True, key="gameplay_action_columns")
+            c1, c2 = st.columns(2, border=True)
             
-            # Use stateful variables to hold button context safely across re-renders
-            play = False
+            ball_count = st.session_state.playDict['Balls Played']
+            runPlayed = st.slider("Choose what to play.", min_value=1, max_value=11, key=f"sl_p_{ball_count}_{random.randint(10000, 99999)}")
             
-            with c1:
-                st.badge(st.session_state.playerName, color="blue", key="player_turn_badge")
-                st.write("Player to Bowl")
-                st.warning("Please don't use this playing system after you get out or after the match is over.")
+            if st.button(f"Play {runPlayed}?", key=f"bt_p_{ball_count}_{random.randint(10000, 99999)}"):
+                st.session_state.playDict["Balls Played"] += 1
                 
-                # Append total ball history string length to keep keys unique for every turn
-                ball_suffix = f"_ball_{st.session_state.playDict['Balls Played']}"
-                runPlayed = st.slider(
-                    "Choose what to play.", 
-                    min_value=1, 
-                    max_value=11, 
-                    key=f"player_runs_slider{ball_suffix}"
-                )
-                if st.button(f"Play {runPlayed}?", key=f"submit_run_button{ball_suffix}"):
-                    play = True
-                    st.session_state.playDict["Balls Played"] += 1
+                with c1:
+                    st.badge(st.session_state.playerName, color="blue")
+                    st.write("Player to Bowl")
+                    st.warning("Please don't use this playing system after you get out or after the match is over.")
                   
-            with c2:
-                st.badge("Bot", color="green", key="bot_turn_badge")
-                st.write("Bot to Bat")
-                if play: 
+                with c2:
+                    st.badge("Bot", color="green")
+                    st.write("Bot to Bat")
                     runPlayedByBot = random.choice(list(range(1, 12)))
                     st.metric("Run played by bot", runPlayedByBot)
                     st.session_state.playDict["Runs Played"].append(runPlayed)
                     st.session_state.playDict["Score"] += runPlayed
                     st.session_state.playDict["RunRate"] = st.session_state.playDict["Score"] // st.session_state.playDict["Balls Played"]
           
-            if play and 'runPlayedByBot' in locals():
-                # Post-ball resolution container tracking
-                resolution_suffix = f"_res_{st.session_state.playDict['Balls Played']}"
-                
                 st.subheader("Game Stats")
                 st.divider()
-                with st.container(border=True, key=f"stats_metrics_container{resolution_suffix}"):
-                    c9, c0, ca, c = st.columns(4, border=True, key=f"metrics_row_columns{resolution_suffix}")
+                with st.container(border=True):
+                    c9, c0, ca, c = st.columns(4, border=True)
                     c9.metric("Score", f"{st.session_state.playDict['Score']} RUNS")
                     c0.metric("Run Rate", f"{st.session_state.playDict['RunRate']}")
                     ca.metric("Balls Played", f"{st.session_state.playDict['Balls Played']} BALLS")
                     c.metric("Total overs in this match", f"{st.session_state.playDict['Total Overs']} OVERS")
                     
-                with st.container(border=True, key=f"score_comparison_container{resolution_suffix}"):
+                with st.container(border=True):
                     st.write(f"Player: {runPlayed}")
                     st.write(f"Bot: {runPlayedByBot}")
                     
                     if runPlayed == runPlayedByBot:
                         st.error("Out!")
                         st.divider()
-                        with st.container(border=True, key=f"out_dataframe_container{resolution_suffix}"):
+                        with st.container(border=True):
                             gameStats = pd.DataFrame(list(st.session_state.playDict.items()), columns=["Stat Category", "Stat Obtained"])
-                            st.dataframe(gameStats, hide_index=True, key=f"out_stats_table{resolution_suffix}")
+                            st.dataframe(gameStats, hide_index=True)
                             st.divider()
                             
-                            with st.container(border=True, key=f"out_chart_container{resolution_suffix}"):
+                            with st.container(border=True):
                                 ballsBowledList = list(range(1, (int(st.session_state.playDict["Total Overs"] * 6)) + 1))
                                 a, b = plt.subplots()
                                 b.barh(ballsBowledList[:len(st.session_state.playDict["Runs Played"])], st.session_state.playDict["Runs Played"], color="blue")
@@ -129,7 +109,7 @@ def playingInterface():
                                     b.set_xlim(0, max(ballsBowledList))
                                 st.pyplot(a)
                                 
-                            t.sleep(5)  # Reduced from 50 seconds to keep server context active
+                            t.sleep(5)
                             st.session_state.clear()
                             st.rerun()
                           
@@ -138,12 +118,12 @@ def playingInterface():
                         st.subheader("Game Stats")
                         st.divider()
                         st.session_state.gameOver = True
-                        with st.container(border=True, key=f"finish_dataframe_container{resolution_suffix}"):
+                        with st.container(border=True):
                             gameStats = pd.DataFrame(list(st.session_state.playDict.items()), columns=["Stat Category", "Stat Obtained"])
-                            st.dataframe(gameStats, hide_index=True, key=f"finish_stats_table{resolution_suffix}")
+                            st.dataframe(gameStats, hide_index=True)
                             st.divider()
                             
-                            with st.container(border=True, key=f"finish_chart_container{resolution_suffix}"):
+                            with st.container(border=True):
                                 ballsBowledList = list(range(1, (int(st.session_state.playDict["Total Overs"] * 6)) + 1))
                                 a, b = plt.subplots()
                                 b.barh(ballsBowledList, st.session_state.playDict["Runs Played"], label=st.session_state.playerName, color="blue")
@@ -155,8 +135,8 @@ def playingInterface():
                                     b.set_xlim(0, max(ballsBowledList))
                                 st.pyplot(a)
                                 
-                        t.sleep(5)  
-                        st.session_state.clear()
-                        st.rerun()   
+                            t.sleep(5)
+                            st.session_state.clear()
+                            st.rerun()   
 
 playingInterface()
