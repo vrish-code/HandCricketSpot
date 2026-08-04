@@ -13,3 +13,6 @@ def userInterface():
     st.divider()
     st.info("Thank you for using my website!")
     st.caption("Vrishan Somalinga")
+
+
+userInterface()

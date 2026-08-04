@@ -12,7 +12,7 @@ def startDataBase():
     if "playerName" not in st.session_state:
      st.session_state.playerName=f"Player{random.randint(1000,10000)}"
     if "playDict" not in st.session_state:
-        choiceMatchBat=st.slider("How many overs for the match?", min_value=1, max_value=20)
+        choiceMatchBat=st.slider("How many overs for the match?", min_value=1, max_value=20, key="bat")
         play=st.button(f"Play match for {choiceMatchBat} overs")
         if play:
           choiceMatchBat*=6
