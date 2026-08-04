@@ -10,8 +10,8 @@ def startDataBase():
     if "playerName" not in st.session_state:
         st.session_state.playerName = f"Player{random.randint(1000,10000)}"
     if "playDict" not in st.session_state:
-        choiceMatchBat = st.slider("How many overs for the match?", min_value=1, max_value=20, key=f"sl_i_1233")
-        if st.button(f"Play match for {choiceMatchBat} overs", key=f"bt_i_3294"):
+        choiceMatchBat = st.slider("How many overs for the match?", min_value=1, max_value=20, key="slider_match_overs_setting_92817")
+        if st.button(f"Play match for {choiceMatchBat} overs", key="button_start_match_trigger_83401"):
             choiceMatchBat *= 6
             overCount = choiceMatchBat / 6
             if "playDict" not in st.session_state:
@@ -44,7 +44,7 @@ def playingInterface():
         with st.container(border=True):
             st.subheader("Play here.")
             with st.container(border=True):
-                if st.button("Quit this page", key=f"bt_q_3267"):
+                if st.button("Quit this page", key="button_quit_session_action_54192"):
                     st.session_state.clear()
                     st.rerun()
                     playingInterface()
@@ -52,9 +52,9 @@ def playingInterface():
             c1, c2 = st.columns(2, border=True)
             
             ball_count = st.session_state.playDict['Balls Played']
-            runPlayed = st.slider("Choose what to play.", min_value=1, max_value=11, key=f"sl_p_12936")
+            runPlayed = st.slider("Choose what to play.", min_value=1, max_value=11, key="slider_gameplay_run_selection_76543")
             
-            if st.button(f"Play {runPlayed}?", key=f"bt_p_12835"):
+            if st.button(f"Play {runPlayed}?", key="button_submit_gameplay_turn_10928"):
                 st.session_state.playDict["Runs Played"].append(runPlayed)
                 st.session_state.playDict["Score"] += runPlayed
                 st.session_state.playDict["Balls Played"] += 1
@@ -108,7 +108,7 @@ def playingInterface():
                             st.session_state.clear()
                             st.rerun()
                           
-                    elif st.session_state.playDict["Balls Played"] == st.session_state.playDict["Total Overs"] * 6:
+                    elif st.session_state.playDict["Balls Played"] == ball_count:
                         st.success("Match finished!")
                         st.subheader("Game Stats")
                         st.divider()
